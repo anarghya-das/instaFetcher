@@ -105,6 +105,8 @@ def scroll(driver,doneDivs,extract=False):
 
 def downloadHelper(fileName, url):
     folder="all\\"
+    if not os.path.isdir(folder):
+        os.mkdir(folder)
     response = requests.get(url, stream=True)
     with open(folder+fileName, 'wb') as out_file:
         shutil.copyfileobj(response.raw, out_file)
@@ -155,7 +157,10 @@ def downloadAll(username,email="",password=""):
 def downloadWithLink(link):
     start=time.time()    
     driver=webdriver.Chrome()
-    downloadPicture(driver,link)
+    if driver.find_elements_by_xpath("//video[@class='tWeCl']"):
+        downloadVideo(driver,link)
+    else:
+        downloadPicture(driver,link)
     end=time.time()
     seconds = end-start
     minutes = seconds // 60
