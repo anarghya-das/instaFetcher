@@ -13,6 +13,8 @@ def downloadVideo(driver,link,fname="default"):
     driver.switch_to.window(driver.window_handles[1])
     # driver.get(link)
     videoSource=driver.find_elements_by_xpath("//video[@class='tWeCl']")
+    if not videoSource:
+        return False
     vs=videoSource[0].get_attribute('src')
     fname=vs[vs.rfind('/')+1:vs.find('?')]
     if videoSource not in downloadedVids:
@@ -20,6 +22,7 @@ def downloadVideo(driver,link,fname="default"):
         downloadedVids.append(videoSource)
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
+    return True
 
 def zip(files):
     with ZipFile('all\\Pics.zip','w') as zip:
@@ -36,6 +39,8 @@ def downloadPicture(driver,link):
     downloadedPics=[]
     fNames=[]
     images=driver.find_elements_by_xpath("//div[@class='KL4Bh']")
+    if not images:
+        return False
     multi=driver.find_elements_by_xpath("//button[@class='  _6CZji']")
     if multi:
         while multi:
@@ -56,6 +61,7 @@ def downloadPicture(driver,link):
         downloadHelper(fname,src)
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
+    return True
 
 
 def addDiv(driver,divs,doneDivs):
@@ -157,10 +163,9 @@ def downloadAll(username,email="",password=""):
 def downloadWithLink(link):
     start=time.time()    
     driver=webdriver.Chrome()
-    if driver.find_elements_by_xpath("//video[@class='tWeCl']"):
+    if not downloadPicture(driver,link): 
         downloadVideo(driver,link)
-    else:
-        downloadPicture(driver,link)
+
     end=time.time()
     seconds = end-start
     minutes = seconds // 60
@@ -170,11 +175,12 @@ def downloadWithLink(link):
 
 # * Example Usage
 
-name="USERNAME OF THE ACCOUNT TO SCRAP" 
+name="USERNAME TO BE SCRAPED" 
 # ! If target account is private, enter the details of the account which is following it.
 AUTH_EMAIL="USERNAME OR EMAIL"
 AUTH_PASS="PASSWORD"
 
-downloadWithLink("https://www.instagram.com/p/BumEu9dlXn5/") # * Downloads the pciture(s) or video(s) in the specified link of the post
+downloadWithLink("LINK TO POST") # * Downloads the pciture(s) or video(s) in the specified link of the post
 downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the pictures and video uploaded by the given user (name)
 
+# TODO: MAKE IT ASYNC TO IMPROVE COMPLETE PROFILE DOWNLOAD TIME
