@@ -1,8 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from zipfile import ZipFile 
-import os
-import time, shutil, requests
+from datetime import datetime
+import os, time, shutil, requests, json
 
 SCROLL_PAUSE_TIME = 2
 
@@ -16,6 +16,13 @@ def downloadVideo(driver,link,fname="default"):
     if not videoSource:
         return False
     vs=videoSource[0].get_attribute('src')
+    jText=driver.find_elements_by_xpath("//script[@type='application/ld+json']")[0].get_attribute('text')
+    jsobObject=json.loads(jText)
+    dString=jsobObject['uploadDate']
+    uploadTime=datetime.strptime(dString,'%Y-%m-%dT%H:%M:%S')
+    y=datetime.strptime("2019",'%Y')
+    ye=uploadTime.year
+    print(ye==y.year)
     fname=vs[vs.rfind('/')+1:vs.find('?')]
     if videoSource not in downloadedVids:
         downloadHelper(fname,vs)
@@ -180,7 +187,7 @@ name="USERNAME TO BE SCRAPED"
 AUTH_EMAIL="USERNAME OR EMAIL"
 AUTH_PASS="PASSWORD"
 
-downloadWithLink("LINK TO POST") # * Downloads the pciture(s) or video(s) in the specified link of the post
-downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the pictures and video uploaded by the given user (name)
+downloadWithLink("https://www.instagram.com/p/BvOOD9yl4mM/") # * Downloads the pciture(s) or video(s) in the specified link of the post
+# downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the pictures and video uploaded by the given user (name)
 
 # TODO: MAKE IT ASYNC TO IMPROVE COMPLETE PROFILE DOWNLOAD TIME
