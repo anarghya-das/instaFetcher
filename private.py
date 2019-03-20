@@ -93,27 +93,6 @@ def addDiv(driver,divs,doneDivs,fyear=""):
             doneDivs.append(div)
     return True
 
-
-def login(driver,em="",pas=""):
-    link=driver.find_elements_by_xpath("//a[@class='hUQXy']")[0].get_attribute('href')
-    driver.get(link)
-    if em == "" or pas == "":
-        driver.close()
-        raise Exception("User is private, please provide login details!")
-        
-    print("Logging into the account..")
-
-    email=driver.find_elements_by_xpath("//input[@class='_2hvTZ pexuQ zyHYP']")[0]
-    password=driver.find_elements_by_xpath("//input[@class='_2hvTZ pexuQ zyHYP']")[1]    
-    email.send_keys(em)
-    password.send_keys(pas)
-    driver.execute_script('document.getElementsByClassName("_0mzm- sqdOP  L3NKy       ")[0].click()')
-    # TODO: Check if login is successful 
-    print("Login Successful!")
-    time.sleep(2)
-    print("Redirecting to target user...",end=" ")
-    
-
 def scroll(driver,doneDivs,extract=False,fyear=""):
         # Get scroll height
     last_height = driver.execute_script("return document.body.scrollHeight")
@@ -144,18 +123,40 @@ def downloadHelper(fileName, url):
     with open(folder+fileName, 'wb') as out_file:
         shutil.copyfileobj(response.raw, out_file)
 
+def login(driver,em="",pas=""):
+    link=driver.find_elements_by_xpath("//a[@class='hUQXy']")[0].get_attribute('href')
+    driver.get(link)
+    if em == "" or pas == "":
+        driver.close()
+        raise Exception("User is private, please provide login details!")
+        
+    print("Logging into the account..")
 
-def downloadAll(username,email="",password=""):
-    start=time.time()
-    doneDivs=[]
+    email=driver.find_elements_by_xpath("//input[@class='_2hvTZ pexuQ zyHYP']")[0]
+    password=driver.find_elements_by_xpath("//input[@class='_2hvTZ pexuQ zyHYP']")[1]    
+    email.send_keys(em)
+    password.send_keys(pas)
+    driver.execute_script('document.getElementsByClassName("_0mzm- sqdOP  L3NKy       ")[0].click()')
+    # TODO: Check if login is successful 
+    print("Login Successful!")
+    time.sleep(2)
+    print("Redirecting to target user...",end=" ")
+
+
+def setup(username):
     options=webdriver.ChromeOptions()
     # options.add_argument('headless')
     driver=webdriver.Chrome(options=options)
     domain = "https://www.instagram.com"
     user ='/'+username
     driver.get(domain+user)
-
     res=driver.find_elements_by_xpath("//div[@class='Nd_Rl _2z6nI']")
+    return (driver,res,domain,user)
+
+def downloadAll(username,email="",password=""):
+    start=time.time()
+    doneDivs=[]
+    driver,res,domain, user=setup(username)
 
     if res:
         login(driver,email,password)
@@ -164,6 +165,7 @@ def downloadAll(username,email="",password=""):
 
     print("Collecting Post Links and Downloading...",end=" ")
     scroll(driver,doneDivs,True)
+    driver.close()
     print("Done! ",end=" ")
     end=time.time()
     print(str(len(doneDivs)*3)+" Posts Scrapped.")
@@ -173,7 +175,26 @@ def downloadAll(username,email="",password=""):
     seconds = seconds % 60
     t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
     print("Time Taken: "+t)
+
+def donwloadWithFilter(name,year,email="",password=""):
+    start=time.time()
+    doneDivs=[]
+    driver,res,domain,user=setup(name)    
+
+    if res:
+        login(driver,email,password)
+        driver.get(domain+user)
+        print("Done!")
+
+    scroll(driver,doneDivs,True,year)
     driver.close()
+    end=time.time()
+    seconds = end-start
+    minutes = seconds / 60
+    seconds = seconds % 60
+    t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
+    print("Time Taken: "+t)
+
 
 def downloadWithLink(link):
     start=time.time()    
@@ -189,23 +210,6 @@ def downloadWithLink(link):
     t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
     print("Time Taken: "+t)
 
-def donwloadWithFilter(name,year,email="",password=""):
-    doneDivs=[]
-    options=webdriver.ChromeOptions()
-    # options.add_argument('headless')
-    driver=webdriver.Chrome(options=options)
-    domain = "https://www.instagram.com"
-    user ='/'+name
-    driver.get(domain+user)
-    res=driver.find_elements_by_xpath("//div[@class='Nd_Rl _2z6nI']")
-
-    if res:
-        login(driver,email,password)
-        driver.get(domain+user)
-        print("Done!")
-
-    scroll(driver,doneDivs,True,year)
-
 # * Example Usage
 
 name="USERNAME to be scraped" 
@@ -216,6 +220,6 @@ AUTH_PASS="PASSWORD"
 
 # downloadWithLink("https://www.instagram.com/p/BvOOD9yl4mM/") # * Downloads the post in the specified link of the post
 # downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
-# donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
+donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
 
 # TODO: MAKE IT ASYNC TO IMPROVE COMPLETE PROFILE DOWNLOAD TIME
