@@ -170,6 +170,6 @@ name="USERNAME OF THE ACCOUNT TO SCRAP"
 AUTH_EMAIL="USERNAME OR EMAIL"
 AUTH_PASS="PASSWORD"
 
-downloadWithLink("https://www.instagram.com/p/BumEu9dlXn5/")
-downloadAll(name,AUTH_EMAIL,AUTH_PASS)
+downloadWithLink("https://www.instagram.com/p/BumEu9dlXn5/") # * Downloads the pciture(s) or video(s) in the specified link of the post
+downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the pictures and video uploaded by the given user (name)
 
