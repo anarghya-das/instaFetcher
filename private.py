@@ -76,7 +76,6 @@ def addDiv(driver,divs,doneDivs,fyear=""):
                     link=a.get_attribute("href")
                     jText=openlink(driver,link)
                     if fyear != "" and not filterYear(fyear,jText):
-                        driver.close()
                         return False
                     # download photos
                     downloadPicture(driver)
@@ -113,6 +112,8 @@ def scroll(driver,doneDivs,extract=False,fyear=""):
         if new_height == last_height:
             break
         last_height = new_height
+    driver.close()
+    
 
 
 def downloadHelper(fileName, url):
@@ -145,7 +146,7 @@ def login(driver,em="",pas=""):
 
 def setup(username):
     options=webdriver.ChromeOptions()
-    # options.add_argument('headless')
+    options.add_argument('headless')
     driver=webdriver.Chrome(options=options)
     domain = "https://www.instagram.com"
     user ='/'+username
@@ -165,7 +166,6 @@ def downloadAll(username,email="",password=""):
 
     print("Collecting Post Links and Downloading...",end=" ")
     scroll(driver,doneDivs,True)
-    driver.close()
     print("Done! ",end=" ")
     end=time.time()
     print(str(len(doneDivs)*3)+" Posts Scrapped.")
@@ -187,7 +187,6 @@ def donwloadWithFilter(name,year,email="",password=""):
         print("Done!")
 
     scroll(driver,doneDivs,True,year)
-    driver.close()
     end=time.time()
     seconds = end-start
     minutes = seconds / 60
@@ -212,8 +211,8 @@ def downloadWithLink(link):
 
 # * Example Usage
 
-name="USERNAME to be scraped" 
-year="YEAR TO FILTER OUT THE POSTS"
+name="narendramodi" 
+year="2019"
 # ! If target account is private, enter the details of the account which is following it.
 AUTH_EMAIL="USERNAME OR EMAIL"
 AUTH_PASS="PASSWORD"
