@@ -6,29 +6,23 @@ import os, time, shutil, requests, json
 
 SCROLL_PAUSE_TIME = 2
 
-def downloadVideo(driver,link,fname="default"):
+def filterYear(year,jstr):
+    jsobObject=json.loads(jstr)
+    dString=jsobObject['uploadDate']
+    uploadTime=datetime.strptime(dString,'%Y-%m-%dT%H:%M:%S')
+    y=datetime.strptime(year,'%Y')
+    return uploadTime.year==y.year
+
+def downloadVideo(driver):
     downloadedVids=[]
-    script='window.open("'+link+'");'
-    driver.execute_script(script)
-    driver.switch_to.window(driver.window_handles[1])
-    # driver.get(link)
     videoSource=driver.find_elements_by_xpath("//video[@class='tWeCl']")
     if not videoSource:
         return False
     vs=videoSource[0].get_attribute('src')
-    jText=driver.find_elements_by_xpath("//script[@type='application/ld+json']")[0].get_attribute('text')
-    jsobObject=json.loads(jText)
-    dString=jsobObject['uploadDate']
-    uploadTime=datetime.strptime(dString,'%Y-%m-%dT%H:%M:%S')
-    y=datetime.strptime("2019",'%Y')
-    ye=uploadTime.year
-    print(ye==y.year)
     fname=vs[vs.rfind('/')+1:vs.find('?')]
     if videoSource not in downloadedVids:
         downloadHelper(fname,vs)
         downloadedVids.append(videoSource)
-    driver.close()
-    driver.switch_to.window(driver.window_handles[0])
     return True
 
 def zip(files):
@@ -37,12 +31,7 @@ def zip(files):
             zip.write(f)
             os.remove(f)        
 
-def downloadPicture(driver,link): 
-    # TODO: Handle a video in between a multiple post
-    script='window.open("'+link+'");'
-    driver.execute_script(script)
-    driver.switch_to.window(driver.window_handles[1])
-    # driver.get(link)
+def downloadPicture(driver): 
     downloadedPics=[]
     fNames=[]
     images=driver.find_elements_by_xpath("//div[@class='KL4Bh']")
@@ -66,12 +55,17 @@ def downloadPicture(driver,link):
         src=images[0].find_element_by_tag_name('img').get_attribute('src')
         fname=src[src.rfind('/')+1:src.find('?')]
         downloadHelper(fname,src)
-    driver.close()
-    driver.switch_to.window(driver.window_handles[0])
     return True
 
+def openlink(driver,link):
+    script='window.open("'+link+'");'
+    driver.execute_script(script)
+    driver.switch_to.window(driver.window_handles[1])
+    Text=driver.find_elements_by_xpath("//script[@type='application/ld+json']")[0].get_attribute('text')
+    return Text
 
-def addDiv(driver,divs,doneDivs):
+
+def addDiv(driver,divs,doneDivs,fyear=""):
     for div in divs:
         if div not in doneDivs:
             posts=div.find_elements_by_xpath("div[@class='v1Nh3 kIKUG  _bz0w']")
@@ -79,12 +73,25 @@ def addDiv(driver,divs,doneDivs):
                 a=post.find_element_by_tag_name('a')
                 multiple=a.find_elements_by_xpath("div[@class='u7YqG']")
                 if not multiple or multiple and multiple[0].find_element_by_css_selector('span').get_attribute("aria-label") =='Carousel':
+                    link=a.get_attribute("href")
+                    jText=openlink(driver,link)
+                    if fyear != "" and not filterYear(fyear,jText):
+                        driver.close()
+                        return False
                     # download photos
-                    downloadPicture(driver,a.get_attribute("href"))
+                    downloadPicture(driver)
                 else:
+                    link=a.get_attribute("href")
+                    jText=openlink(driver,link)
+                    if fyear != "" and not filterYear(fyear,jText):
+                        driver.close()
+                        return False
                     # download videos
-                    downloadVideo(driver,a.get_attribute("href"))
+                    downloadVideo(driver)
+                driver.close()
+                driver.switch_to.window(driver.window_handles[0])
             doneDivs.append(div)
+    return True
 
 
 def login(driver,em="",pas=""):
@@ -94,18 +101,18 @@ def login(driver,em="",pas=""):
     password.send_keys(pas)
     driver.execute_script('document.getElementsByClassName("_0mzm- sqdOP  L3NKy       ")[0].click()')
 
-def scroll(driver,doneDivs,extract=False):
+def scroll(driver,doneDivs,extract=False,fyear=""):
         # Get scroll height
     last_height = driver.execute_script("return document.body.scrollHeight")
     if extract:
         divs=driver.find_elements_by_xpath("//div[@class='Nnq7C weEfm']")
-        addDiv(driver,divs,doneDivs)
-    while True:
+        res=addDiv(driver,divs,doneDivs,fyear)
+    while True and res:
     # Scroll down to bottom
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         if extract:
             divs=driver.find_elements_by_xpath("//div[@class='Nnq7C weEfm']")
-            addDiv(driver,divs,doneDivs)
+            res=addDiv(driver,divs,doneDivs,fyear)
         # Wait to load page
         # time.sleep(SCROLL_PAUSE_TIME)
 
@@ -170,9 +177,10 @@ def downloadAll(username,email="",password=""):
 def downloadWithLink(link):
     start=time.time()    
     driver=webdriver.Chrome()
-    if not downloadPicture(driver,link): 
-        downloadVideo(driver,link)
-
+    driver.get(link)
+    if not downloadPicture(driver): 
+        downloadVideo(driver)
+    driver.close()
     end=time.time()
     seconds = end-start
     minutes = seconds // 60
@@ -180,14 +188,45 @@ def downloadWithLink(link):
     t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
     print("Time Taken: "+t)
 
+def donwloadWithFilter(name,year,email="",password=""):
+    doneDivs=[]
+    options=webdriver.ChromeOptions()
+    # options.add_argument('headless')
+    driver=webdriver.Chrome(options=options)
+    domain = "https://www.instagram.com"
+    user ='/'+name
+    driver.get(domain+user)
+    res=driver.find_elements_by_xpath("//div[@class='Nd_Rl _2z6nI']")
+
+    if res:
+        link=driver.find_elements_by_xpath("//a[@class='hUQXy']")[0].get_attribute('href')
+        driver.get(link)
+        if email == "" or password == "":
+            driver.close()
+            raise Exception("User is private, please provide login details!")
+        
+        print("Logging into the account..")
+        login(driver,email,password)
+        print("Login Successful!")
+        
+        time.sleep(2)
+
+        print("Redirecting to target user...",end=" ")
+        driver.get(domain+user)
+        print("Done!")
+
+    scroll(driver,doneDivs,True,year)
+    
 # * Example Usage
 
-name="USERNAME TO BE SCRAPED" 
+name="USERNAME to be scraped" 
+year="YEAR TO FILTER OUT THE POSTS"
 # ! If target account is private, enter the details of the account which is following it.
 AUTH_EMAIL="USERNAME OR EMAIL"
 AUTH_PASS="PASSWORD"
 
-downloadWithLink("https://www.instagram.com/p/BvOOD9yl4mM/") # * Downloads the pciture(s) or video(s) in the specified link of the post
-# downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the pictures and video uploaded by the given user (name)
+# downloadWithLink("https://www.instagram.com/p/BvOOD9yl4mM/") # * Downloads the post in the specified link of the post
+# downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
+# donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
 
 # TODO: MAKE IT ASYNC TO IMPROVE COMPLETE PROFILE DOWNLOAD TIME
