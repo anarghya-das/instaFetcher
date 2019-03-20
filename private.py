@@ -13,6 +13,23 @@ def filterYear(year,jstr):
     y=datetime.strptime(year,'%Y')
     return uploadTime.year==y.year
 
+
+def downloadHelper(fileName, url):
+    folder="all\\"
+    if not os.path.isdir(folder):
+        os.mkdir(folder)
+    response = requests.get(url, stream=True)
+    with open(folder+fileName, 'wb') as out_file:
+        shutil.copyfileobj(response.raw, out_file)
+
+
+def zip(files):
+    with ZipFile('all\\Pics.zip','w') as zip:
+        for f in files:
+            zip.write(f)
+            os.remove(f)        
+
+
 def downloadVideo(driver):
     downloadedVids=[]
     videoSource=driver.find_elements_by_xpath("//video[@class='tWeCl']")
@@ -25,11 +42,6 @@ def downloadVideo(driver):
         downloadedVids.append(videoSource)
     return True
 
-def zip(files):
-    with ZipFile('all\\Pics.zip','w') as zip:
-        for f in files:
-            zip.write(f)
-            os.remove(f)        
 
 def downloadPicture(driver): 
     downloadedPics=[]
@@ -56,6 +68,7 @@ def downloadPicture(driver):
         fname=src[src.rfind('/')+1:src.find('?')]
         downloadHelper(fname,src)
     return True
+
 
 def openlink(driver,link):
     script='window.open("'+link+'");'
@@ -92,6 +105,7 @@ def addDiv(driver,divs,doneDivs,fyear=""):
             doneDivs.append(div)
     return True
 
+
 def scroll(driver,doneDivs,extract=False,fyear=""):
         # Get scroll height
     last_height = driver.execute_script("return document.body.scrollHeight")
@@ -114,15 +128,6 @@ def scroll(driver,doneDivs,extract=False,fyear=""):
         last_height = new_height
     driver.close()
     
-
-
-def downloadHelper(fileName, url):
-    folder="all\\"
-    if not os.path.isdir(folder):
-        os.mkdir(folder)
-    response = requests.get(url, stream=True)
-    with open(folder+fileName, 'wb') as out_file:
-        shutil.copyfileobj(response.raw, out_file)
 
 def login(driver,em="",pas=""):
     link=driver.find_elements_by_xpath("//a[@class='hUQXy']")[0].get_attribute('href')
@@ -154,6 +159,7 @@ def setup(username):
     res=driver.find_elements_by_xpath("//div[@class='Nd_Rl _2z6nI']")
     return (driver,res,domain,user)
 
+
 def downloadAll(username,email="",password=""):
     start=time.time()
     doneDivs=[]
@@ -175,6 +181,7 @@ def downloadAll(username,email="",password=""):
     seconds = seconds % 60
     t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
     print("Time Taken: "+t)
+
 
 def donwloadWithFilter(name,year,email="",password=""):
     start=time.time()
@@ -209,16 +216,17 @@ def downloadWithLink(link):
     t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
     print("Time Taken: "+t)
 
+
 # * Example Usage
 
-name="narendramodi" 
-year="2019"
+name="USERNAME of the account to scrape posts" 
+year="YEAR TO USE AS A FILTER"
 # ! If target account is private, enter the details of the account which is following it.
 AUTH_EMAIL="USERNAME OR EMAIL"
 AUTH_PASS="PASSWORD"
 
-# downloadWithLink("https://www.instagram.com/p/BvOOD9yl4mM/") # * Downloads the post in the specified link of the post
-# downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
+downloadWithLink("https://www.instagram.com/p/BvOOD9yl4mM/") # * Downloads the post in the specified link of the post
+downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
 donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
 
 # TODO: MAKE IT ASYNC TO IMPROVE COMPLETE PROFILE DOWNLOAD TIME
