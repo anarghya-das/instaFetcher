@@ -95,11 +95,24 @@ def addDiv(driver,divs,doneDivs,fyear=""):
 
 
 def login(driver,em="",pas=""):
+    link=driver.find_elements_by_xpath("//a[@class='hUQXy']")[0].get_attribute('href')
+    driver.get(link)
+    if em == "" or pas == "":
+        driver.close()
+        raise Exception("User is private, please provide login details!")
+        
+    print("Logging into the account..")
+
     email=driver.find_elements_by_xpath("//input[@class='_2hvTZ pexuQ zyHYP']")[0]
     password=driver.find_elements_by_xpath("//input[@class='_2hvTZ pexuQ zyHYP']")[1]    
     email.send_keys(em)
     password.send_keys(pas)
     driver.execute_script('document.getElementsByClassName("_0mzm- sqdOP  L3NKy       ")[0].click()')
+    # TODO: Check if login is successful 
+    print("Login Successful!")
+    time.sleep(2)
+    print("Redirecting to target user...",end=" ")
+    
 
 def scroll(driver,doneDivs,extract=False,fyear=""):
         # Get scroll height
@@ -145,19 +158,7 @@ def downloadAll(username,email="",password=""):
     res=driver.find_elements_by_xpath("//div[@class='Nd_Rl _2z6nI']")
 
     if res:
-        link=driver.find_elements_by_xpath("//a[@class='hUQXy']")[0].get_attribute('href')
-        driver.get(link)
-        if email == "" or password == "":
-            driver.close()
-            raise Exception("User is private, please provide login details!")
-        
-        print("Logging into the account..")
         login(driver,email,password)
-        print("Login Successful!")
-        
-        time.sleep(2)
-
-        print("Redirecting to target user...",end=" ")
         driver.get(domain+user)
         print("Done!")
 
@@ -199,24 +200,12 @@ def donwloadWithFilter(name,year,email="",password=""):
     res=driver.find_elements_by_xpath("//div[@class='Nd_Rl _2z6nI']")
 
     if res:
-        link=driver.find_elements_by_xpath("//a[@class='hUQXy']")[0].get_attribute('href')
-        driver.get(link)
-        if email == "" or password == "":
-            driver.close()
-            raise Exception("User is private, please provide login details!")
-        
-        print("Logging into the account..")
         login(driver,email,password)
-        print("Login Successful!")
-        
-        time.sleep(2)
-
-        print("Redirecting to target user...",end=" ")
         driver.get(domain+user)
         print("Done!")
 
     scroll(driver,doneDivs,True,year)
-    
+
 # * Example Usage
 
 name="USERNAME to be scraped" 
