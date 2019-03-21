@@ -70,7 +70,7 @@ Here's an example showing the steps:
 
 <img src="https://github.com/anarghya-das/instaFetcher/blob/master/examples/downloadWithLink.gif"  width="900" height="400" />
 
-## TODOs 
+## TODO
 
 1. Make the process **asynchronous**.
 
