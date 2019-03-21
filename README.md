@@ -69,3 +69,16 @@ step no. 7 as mentioned above.
 Here's an example showing the steps:
 
 <img src="https://github.com/anarghya-das/instaFetcher/blob/master/examples/downloadWithLink.gif"  width="900" height="400" />
+
+## TODOs 
+
+1. Make the process **asynchronous**.
+
+2. Add more filter options to the **downloadWithLink** function.
+
+3. Complete the frontend (webpage) and the server functionality.
+
+4. Host the server on **Google Cloud Platform**.
+
+5. Add more features and error handling. 
+
