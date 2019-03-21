@@ -44,3 +44,27 @@ python3 main.py or python main.py
 ```
 
 ## Examples of Usage
+
+Open the **private.py** file. Scroll towards the end where you'll find the following section:
+
+```python
+# * Example Usage
+
+# name="USERNAME of the account to scrape posts" 
+# year="YEAR TO USE AS A FILTER"
+# linkToPost="https://www.instagram.com/p/BvPUab_gBwf/" 
+# ! If target account is private, enter the details of the account which is following it.
+# AUTH_EMAIL="USERNAME OR EMAIL"
+# AUTH_PASS="PASSWORD"
+
+# downloadWithLink(linkToPost) # * Downloads the post in the specified link of the post
+# downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
+# donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
+```
+
+For the first usage example, uncomment the linkToPost variable (line 238) and downloadWithLink() function (line 243).
+Run the file by following the step no. 7 as mentioned above.
+
+Here's an example showing the steps:
+
+![demo](https://github.com/anarghya-das/instaFetcher/blob/master/examples/downloadWithLink.gif)
