@@ -42,3 +42,5 @@ python3 private.py or python private.py
 ```python
 python3 main.py or python main.py
 ```
+
+## Examples of Usage
