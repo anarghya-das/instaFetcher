@@ -15,7 +15,7 @@ def filterYear(year,jstr):
 
 
 def downloadHelper(fileName, url):
-    folder="all\\"
+    folder="all/"
     if not os.path.isdir(folder):
         os.mkdir(folder)
     response = requests.get(url, stream=True)
@@ -24,7 +24,7 @@ def downloadHelper(fileName, url):
 
 
 def zip(files):
-    with ZipFile('all\\Pics.zip','w') as zip:
+    with ZipFile('all/Pics.zip','w') as zip:
         for f in files:
             zip.write(f)
             os.remove(f)        
@@ -203,7 +203,10 @@ def donwloadWithFilter(name,year,email="",password=""):
 
 
 def downloadWithLink(link):
-    start=time.time()    
+    start=time.time()  
+    options=webdriver.ChromeOptions()
+    options.add_argument('headless')
+    driver=webdriver.Chrome(options=options)
     driver=webdriver.Chrome()
     driver.get(link)
     if not downloadPicture(driver): 
