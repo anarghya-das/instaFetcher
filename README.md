@@ -67,4 +67,4 @@ Run the file by following the step no. 7 as mentioned above.
 
 Here's an example showing the steps:
 
-![](https://github.com/anarghya-das/instaFetcher/blob/master/examples/downloadWithLink.mp4)
+![demo](https://github.com/anarghya-das/instaFetcher/blob/master/examples/downloadWithLink.gif)
