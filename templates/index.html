@@ -3,10 +3,14 @@
     <head>
         <script src="{{url_for('static',filename='script.js')}}"></script>
         <title>Instagram Scraper</title>
+        <link rel="stylesheet"
+            href="{{url_for('static',filename='style.css')}}">
     </head>
     <body>
-        <h1>Hello World!</h1>
-        <div id="main"></div>
-        <button onclick="fetch();">Download</button>
+        <div class="main">
+            <h1>Scarpie</h1>
+            <input type="text" id="url_input" />
+            <button onclick="fetch();" id="fetch">Get Image</button>
+        </div>
     </body>
 </html>

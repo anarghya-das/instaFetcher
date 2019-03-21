@@ -1,5 +1,5 @@
 function fetch() {
-	var add = 'https://www.instagram.com/p/BvP6_ydBcJz/';
+	var add = document.getElementById('url_input').value;
 	var o = {
 		link: add
 	};
@@ -22,6 +22,7 @@ function createDiv(value) {
 	div.href = value;
 	div.download = 'picture';
 	div.innerHTML = 'get it';
+	div.style.background = 'red';
 
-	document.getElementById('main').appendChild(div);
+	document.getElementsByClassName('main')[0].appendChild(div);
 }

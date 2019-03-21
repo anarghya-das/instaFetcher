@@ -10,15 +10,16 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/fetch",methods=['POST'])
+@app.route("/fetch", methods=['POST'])
 def get_data():
-    data=request.get_json()
+    data = request.get_json()
     print(data)
     return private.downloadWithLink(data['link'])
 
+
 @app.route("/download/<file>")
 def send(file):
-    return send_file("all/"+file)    
+    return send_file("all/"+file)
 
 
 if __name__ == '__main__':
