@@ -14,12 +14,11 @@ def filterYear(year,jstr):
     return uploadTime.year==y.year
 
 
-def downloadHelper(fileName, url):
-    folder="all/"
+def downloadHelper(fileName, url, folder):
     if not os.path.isdir(folder):
         os.mkdir(folder)
     response = requests.get(url, stream=True)
-    with open(folder+fileName, 'wb') as out_file:
+    with open(folder+"/"+fileName, 'wb') as out_file:
         shutil.copyfileobj(response.raw, out_file)
 
 
@@ -30,7 +29,7 @@ def zip(files):
             os.remove(f)        
 
 
-def downloadVideo(driver):
+def downloadVideo(driver,folder):
     downloadedVids=[]
     fname=""
     videoSource=driver.find_elements_by_xpath("//video[@class='tWeCl']")
@@ -38,13 +37,15 @@ def downloadVideo(driver):
         return False
     vs=videoSource[0].get_attribute('src')
     fname=vs[vs.rfind('/')+1:vs.find('?')]
+    print("Downloading "+fname+"...",end=" ")    
     if videoSource not in downloadedVids:
-        downloadHelper(fname,vs)
+        downloadHelper(fname,vs,folder)
         downloadedVids.append(videoSource)
+    print("Done")
     return fname
 
 
-def downloadPicture(driver): 
+def downloadPicture(driver,folder): 
     downloadedPics=[]
     fNames=[]
     fname=""
@@ -58,7 +59,9 @@ def downloadPicture(driver):
                 if img not in downloadedPics:
                     src=img.find_element_by_tag_name('img').get_attribute('src')
                     fname=src[src.rfind('/')+1:src.find('?')]
-                    downloadHelper(fname,src)
+                    print("Downloading "+fname+"...",end=" ")
+                    downloadHelper(fname,src,folder)
+                    print("Done")
                     fNames.append(fname)
                     downloadedPics.append(img)
             multi[0].click()
@@ -68,7 +71,9 @@ def downloadPicture(driver):
     else:
         src=images[0].find_element_by_tag_name('img').get_attribute('src')
         fname=src[src.rfind('/')+1:src.find('?')]
-        downloadHelper(fname,src)
+        print("Downloading "+fname+"...",end=" ")        
+        downloadHelper(fname,src,folder)
+        print("Done")
     return fname
 
 
@@ -80,7 +85,7 @@ def openlink(driver,link):
     return Text
 
 
-def addDiv(driver,divs,doneDivs,fyear=""):
+def addDiv(driver,divs,doneDivs,folder="",fyear=""):
     for div in divs:
         if div not in doneDivs:
             posts=div.find_elements_by_xpath("div[@class='v1Nh3 kIKUG  _bz0w']")
@@ -93,7 +98,7 @@ def addDiv(driver,divs,doneDivs,fyear=""):
                     if fyear != "" and not filterYear(fyear,jText):
                         return False
                     # download photos
-                    downloadPicture(driver)
+                    downloadPicture(driver,folder)
                 else:
                     link=a.get_attribute("href")
                     jText=openlink(driver,link)
@@ -101,7 +106,7 @@ def addDiv(driver,divs,doneDivs,fyear=""):
                         driver.close()
                         return False
                     # download videos
-                    downloadVideo(driver)
+                    downloadVideo(driver,folder)
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
             doneDivs.append(div)
@@ -205,27 +210,25 @@ def donwloadWithFilter(name,year,email="",password=""):
 
 
 def downloadWithLink(link):
-    print("started")
+    print("Starting Chrome Headless..")
     start=time.time()  
     options=webdriver.ChromeOptions()
     options.add_argument('headless')
     driver=webdriver.Chrome(options=options)
     driver.get(link)
-    f2=downloadPicture(driver)
-    f=""
-    if  f2 == "": 
-        f=downloadVideo(driver)
+    folder="individual"
+    f=downloadPicture(driver,folder)
+    if  f == "": 
+        f=downloadVideo(driver,folder)
     driver.close()
     end=time.time()
     seconds = end-start
     minutes = seconds // 60
     seconds = seconds % 60
     t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
+    print("Download Location: "+folder+"/"+f)
     print("Time Taken: "+t)
-    if f != "":
-        return "/download/"+f
-    else:
-        return "/download/"+f2
+    return "/+"+folder+"/"+f
 
 
 # * Example Usage
@@ -236,7 +239,7 @@ def downloadWithLink(link):
 # AUTH_EMAIL="USERNAME OR EMAIL"
 # AUTH_PASS="PASSWORD"
 
-# downloadWithLink("https://www.instagram.com/p/BvPUab_gBwf/") # * Downloads the post in the specified link of the post
+downloadWithLink("https://www.instagram.com/p/BvPUab_gBwf/") # * Downloads the post in the specified link of the post
 # downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
 # donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
 
