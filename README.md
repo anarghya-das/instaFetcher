@@ -67,4 +67,4 @@ Run the file by following the step no. 7 as mentioned above.
 
 Here's an example showing the steps:
 
-![demo](https://github.com/anarghya-das/instaFetcher/blob/master/examples/downloadWithLink.gif)
+<img src="https://github.com/anarghya-das/instaFetcher/blob/master/examples/downloadWithLink.gif"  width="900" height="400" />
