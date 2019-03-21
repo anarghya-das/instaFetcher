@@ -32,6 +32,7 @@ def zip(files):
 
 def downloadVideo(driver):
     downloadedVids=[]
+    fname=""
     videoSource=driver.find_elements_by_xpath("//video[@class='tWeCl']")
     if not videoSource:
         return False
@@ -40,12 +41,13 @@ def downloadVideo(driver):
     if videoSource not in downloadedVids:
         downloadHelper(fname,vs)
         downloadedVids.append(videoSource)
-    return True
+    return fname
 
 
 def downloadPicture(driver): 
     downloadedPics=[]
     fNames=[]
+    fname=""
     images=driver.find_elements_by_xpath("//div[@class='KL4Bh']")
     if not images:
         return False
@@ -67,7 +69,7 @@ def downloadPicture(driver):
         src=images[0].find_element_by_tag_name('img').get_attribute('src')
         fname=src[src.rfind('/')+1:src.find('?')]
         downloadHelper(fname,src)
-    return True
+    return fname
 
 
 def openlink(driver,link):
@@ -203,13 +205,16 @@ def donwloadWithFilter(name,year,email="",password=""):
 
 
 def downloadWithLink(link):
+    print("started")
     start=time.time()  
     options=webdriver.ChromeOptions()
     options.add_argument('headless')
     driver=webdriver.Chrome(options=options)
     driver.get(link)
-    if not downloadPicture(driver): 
-        downloadVideo(driver)
+    f2=downloadPicture(driver)
+    f=""
+    if  f2 == "": 
+        f=downloadVideo(driver)
     driver.close()
     end=time.time()
     seconds = end-start
@@ -217,18 +222,22 @@ def downloadWithLink(link):
     seconds = seconds % 60
     t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
     print("Time Taken: "+t)
+    if f != "":
+        return "/download/"+f
+    else:
+        return "/download/"+f2
 
 
 # * Example Usage
 
-name="USERNAME of the account to scrape posts" 
-year="YEAR TO USE AS A FILTER"
+# name="USERNAME of the account to scrape posts" 
+# year="YEAR TO USE AS A FILTER"
 # ! If target account is private, enter the details of the account which is following it.
-AUTH_EMAIL="USERNAME OR EMAIL"
-AUTH_PASS="PASSWORD"
+# AUTH_EMAIL="USERNAME OR EMAIL"
+# AUTH_PASS="PASSWORD"
 
-downloadWithLink("https://www.instagram.com/p/BvOOD9yl4mM/") # * Downloads the post in the specified link of the post
-downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
-donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
+# downloadWithLink("https://www.instagram.com/p/BvOOD9yl4mM/") # * Downloads the post in the specified link of the post
+# downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
+# donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
 
 # TODO: MAKE IT ASYNC TO IMPROVE COMPLETE PROFILE DOWNLOAD TIME

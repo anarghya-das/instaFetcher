@@ -3,3 +3,4 @@ insta
 *.zip
 .vscode
 all
+__pycache__
