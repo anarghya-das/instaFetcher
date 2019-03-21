@@ -2,6 +2,7 @@ all
 individual
 *.log
 *.zip
+*.mp4
 .vscode
 all
 __pycache__
