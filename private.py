@@ -207,7 +207,6 @@ def downloadWithLink(link):
     options=webdriver.ChromeOptions()
     options.add_argument('headless')
     driver=webdriver.Chrome(options=options)
-    driver=webdriver.Chrome()
     driver.get(link)
     if not downloadPicture(driver): 
         downloadVideo(driver)
