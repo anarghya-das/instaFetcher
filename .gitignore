@@ -1,6 +1,9 @@
-insta
+all
+individual
 *.log
 *.zip
 .vscode
 all
 __pycache__
+insta.py
+instaJS.py 
