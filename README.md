@@ -63,7 +63,8 @@ Open the **private.py** file. Scroll towards the end where you'll find the follo
 ```
 
 For the first usage example, uncomment the linkToPost variable (line 238) and downloadWithLink() function (line 243).
-Run the file by following the step no. 7 as mentioned above.
+Update the linkToPost variable with your own link you want to download and run the file by following the 
+step no. 7 as mentioned above.
 
 Here's an example showing the steps:
 
