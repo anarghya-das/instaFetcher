@@ -236,7 +236,7 @@ def downloadWithLink(link):
 # AUTH_EMAIL="USERNAME OR EMAIL"
 # AUTH_PASS="PASSWORD"
 
-# downloadWithLink("https://www.instagram.com/p/BvOOD9yl4mM/") # * Downloads the post in the specified link of the post
+# downloadWithLink("https://www.instagram.com/p/BvPUab_gBwf/") # * Downloads the post in the specified link of the post
 # downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
 # donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
 
