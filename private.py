@@ -85,7 +85,7 @@ def openlink(driver,link):
     return Text
 
 
-def addDiv(driver,divs,doneDivs,folder="",fyear=""):
+def addDiv(driver,divs,doneDivs,folder,fyear=""):
     for div in divs:
         if div not in doneDivs:
             posts=div.find_elements_by_xpath("div[@class='v1Nh3 kIKUG  _bz0w']")
@@ -113,18 +113,18 @@ def addDiv(driver,divs,doneDivs,folder="",fyear=""):
     return True
 
 
-def scroll(driver,doneDivs,extract=False,fyear=""):
+def scroll(driver,doneDivs,extract=False,fyear="",folder="all"):
         # Get scroll height
     last_height = driver.execute_script("return document.body.scrollHeight")
     if extract:
         divs=driver.find_elements_by_xpath("//div[@class='Nnq7C weEfm']")
-        res=addDiv(driver,divs,doneDivs,fyear)
+        res=addDiv(driver,divs,doneDivs,folder,fyear)
     while True and res:
     # Scroll down to bottom
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         if extract:
             divs=driver.find_elements_by_xpath("//div[@class='Nnq7C weEfm']")
-            res=addDiv(driver,divs,doneDivs,fyear)
+            res=addDiv(driver,divs,doneDivs,folder,fyear)
         # Wait to load page
         # time.sleep(SCROLL_PAUSE_TIME)
 
@@ -235,11 +235,12 @@ def downloadWithLink(link):
 
 # name="USERNAME of the account to scrape posts" 
 # year="YEAR TO USE AS A FILTER"
+# linkToPost="https://www.instagram.com/p/BvPUab_gBwf/" 
 # ! If target account is private, enter the details of the account which is following it.
 # AUTH_EMAIL="USERNAME OR EMAIL"
 # AUTH_PASS="PASSWORD"
 
-downloadWithLink("https://www.instagram.com/p/BvPUab_gBwf/") # * Downloads the post in the specified link of the post
+# downloadWithLink(linkToPost) # * Downloads the post in the specified link of the post
 # downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
 # donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
 
