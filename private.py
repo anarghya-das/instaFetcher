@@ -155,10 +155,21 @@ def login(driver,em="",pas=""):
     print("Redirecting to target user...",end=" ")
 
 
+def getOperatingSystem():
+    oS=sys.platform
+    if oS == 'linux':
+        return 'drivers/chromedriver_linux64'
+    elif oS == 'win32':
+        return 'drivers/chromedriver.exe'
+    elif oS == 'darwin':
+        return 'drivers/chromedriver_mac64'
+
+
 def setup(username):
     options=webdriver.ChromeOptions()
     options.add_argument('headless')
-    driver=webdriver.Chrome(options=options)
+    driverPath=getOperatingSystem()
+    driver=webdriver.Chrome(driverPath,options=options)
     domain = "https://www.instagram.com"
     user ='/'+username
     driver.get(domain+user)
@@ -207,14 +218,6 @@ def donwloadWithFilter(name,year,email="",password=""):
     t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
     print("Time Taken: "+t)
 
-def getOperatingSystem():
-    oS=sys.platform
-    if oS == 'linux':
-        return 'drivers/chromedriver_linux64'
-    elif oS == 'win32':
-        return 'drivers/chromedriver.exe'
-    elif oS == 'darwin':
-        return 'drivers/chromedriver_mac64'
 
 def downloadWithLink(link):
     print("Starting Chrome Headless..")
