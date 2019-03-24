@@ -2,10 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from zipfile import ZipFile 
 from datetime import datetime
-import os, time, shutil, requests, json
+import os, time, shutil, requests, json, sys
 
 SCROLL_PAUSE_TIME = 2
-
 def filterYear(year,jstr):
     jsobObject=json.loads(jstr)
     dString=jsobObject['uploadDate']
@@ -208,13 +207,22 @@ def donwloadWithFilter(name,year,email="",password=""):
     t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
     print("Time Taken: "+t)
 
+def getOperatingSystem():
+    oS=sys.platform
+    if oS == 'linux':
+        return 'drivers/chromedriver_linux64'
+    elif oS == 'win32':
+        return 'drivers/chromedriver.exe'
+    elif oS == 'darwin':
+        return 'drivers/chromedriver_mac64'
 
 def downloadWithLink(link):
     print("Starting Chrome Headless..")
     start=time.time()  
     options=webdriver.ChromeOptions()
     options.add_argument('headless')
-    driver=webdriver.Chrome(options=options)
+    driverPath=getOperatingSystem()
+    driver=webdriver.Chrome(driverPath,options=options)
     driver.get(link)
     folder="individual"
     f=downloadPicture(driver,folder)
