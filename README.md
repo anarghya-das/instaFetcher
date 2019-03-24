@@ -26,17 +26,15 @@ cd instaFetcher
 pip install -r requirements.txt or pip3 install -r requirements.txt
 ```
 
-5. Download the [chrome driver](http://chromedriver.chromium.org/downloads) and add it to your **PATH**
+5. Make sure you have [**google chrome**](https://www.google.com/chrome/) or any other **chromium** based browser installed in your computer.
 
-6. Make sure you have google chrome or any other chromium based browser installed as well.
-
-7. Now you can either run the python file directly by giving the proper inputs (shown below)
+6. Now you can either run the python file directly by giving the proper inputs (shown below)
 
 ```python
 python3 private.py or python private.py
 ```
 
-8. Or you could run the flask server and access the website on your **localhost**
+7. Or you could run the flask server and access the website on your **localhost**
 
 
 ```python
