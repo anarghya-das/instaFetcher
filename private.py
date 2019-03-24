@@ -246,12 +246,12 @@ def downloadWithLink(link):
 
 # name="USERNAME of the account to scrape posts" 
 # year="YEAR TO USE AS A FILTER"
-# linkToPost="https://www.instagram.com/p/BvPUab_gBwf/" 
+linkToPost="https://www.instagram.com/p/BvPUab_gBwf/" 
 # ! If target account is private, enter the details of the account which is following it.
 # AUTH_EMAIL="USERNAME OR EMAIL"
 # AUTH_PASS="PASSWORD"
 
-# downloadWithLink(linkToPost) # * Downloads the post in the specified link of the post
+downloadWithLink(linkToPost) # * Downloads the post in the specified link of the post
 # downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
 # donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
 
