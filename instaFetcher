@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+import argparse
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from zipfile import ZipFile 
@@ -236,23 +238,26 @@ def downloadWithLink(link):
     seconds = end-start
     minutes = seconds // 60
     seconds = seconds % 60
-    t="{:0>2} minutes:{:05.2f} seconds".format(int(minutes),seconds)
+    t="{:0>2} minutes {:05.2f} seconds".format(int(minutes),seconds)
     print("Download Location: "+folder+"/"+f)
     print("Time Taken: "+t)
     return "/+"+folder+"/"+f
 
 
-# * Example Usage
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Download pictures from instagram!')
+    parser.add_argument('linkToPost',type=str,help='URL for the image/video to download.')
+    args=parser.parse_args()
+    # * Example Usage
+    # name="USERNAME of the account to scrape posts" 
+    # year="YEAR TO USE AS A FILTER"
+    # linkToPost="https://www.instagram.com/p/BvPUab_gBwf/" 
+    # ! If target account is private, enter the details of the account which is following it.
+    # AUTH_EMAIL="USERNAME OR EMAIL"
+    # AUTH_PASS="PASSWORD"
+    print(args.linkToPost)
+    downloadWithLink(args.linkToPost) # * Downloads the post in the specified link of the post
+    # downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
+    # donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
 
-# name="USERNAME of the account to scrape posts" 
-# year="YEAR TO USE AS A FILTER"
-linkToPost="https://www.instagram.com/p/BvPUab_gBwf/" 
-# ! If target account is private, enter the details of the account which is following it.
-# AUTH_EMAIL="USERNAME OR EMAIL"
-# AUTH_PASS="PASSWORD"
-
-downloadWithLink(linkToPost) # * Downloads the post in the specified link of the post
-# downloadAll(name,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts uploaded by the given user (name)
-# donwloadWithFilter(name,year,AUTH_EMAIL,AUTH_PASS) # * Downloads all the posts with the given year
-
-# TODO: MAKE IT ASYNC TO IMPROVE COMPLETE PROFILE DOWNLOAD TIME
+    # TODO: MAKE IT ASYNC TO IMPROVE COMPLETE PROFILE DOWNLOAD TIME
